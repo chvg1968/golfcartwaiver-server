@@ -35,7 +35,7 @@ export async function sendWaiverEmail(req, res) {
     console.log('Enlace PDF:', pdfLink);
 
     const emailPayload = {
-      from: `Golf Cart Waiver from ${formData.guestName} <onboarding@resend.dev>`,
+      from: `Luxe Properties Golf Cart Waiver from ${formData.guestName} <onboarding@resend.dev>`,
       to: process.env.TEST_EMAIL,
       subject: 'Golf Cart Liability Waiver',
       html: generateEmailHTML(formData, pdfLink),

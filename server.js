@@ -35,7 +35,32 @@ app.use((req, res, next) => {
 app.disable('x-powered-by');
 
 // Middleware CORS global
-app.use(cors(corsOptions));
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    'http://localhost:8888', 
+    'https://golf-cart-waiver.netlify.app',
+    'http://localhost:3000',
+    'https://golfcartwaiver-server.netlify.app'
+  ];
+  const origin = req.headers.origin;
+
+  console.log('Origen de la solicitud:', origin);
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', true);
+  
+  // Responder a solicitudes OPTIONS
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  
+  next();
+});
 
 // Middleware para parsear JSON
 app.use(express.json({ 
@@ -128,6 +153,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log('- http://localhost:8888');
   console.log('- https://golf-cart-waiver.netlify.app');
   console.log('- http://localhost:3000');
+  console.log('- https://golfcartwaiver-server.netlify.app');
   console.log('===== SERVIDOR INICIADO =====');
 });
 

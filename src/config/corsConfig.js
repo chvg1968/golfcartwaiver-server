@@ -1,21 +1,29 @@
 const ALLOWED_ORIGINS = [
-  'https://golf-cart-waiver.netlify.app',
+  'http://localhost:8888', 
+  'https://golf-cart-waiver.netlify.app', 
   'http://localhost:3000',
-  'http://localhost:8888',
   'https://golfcartwaiver-server.netlify.app'
 ];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // Permitir solicitudes sin origen (como solicitudes de herramientas de desarrollo)
+    console.log('Origen de la solicitud:', origin);
+
     if (!origin || ALLOWED_ORIGINS.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      console.warn('Origen no permitido:', origin);
+      callback(new Error('Origen no permitido por CORS'));
     }
   },
-  methods: ['GET', 'POST', 'OPTIONS', 'HEAD'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+  allowedHeaders: [
+    'Origin', 
+    'X-Requested-With', 
+    'Content-Type', 
+    'Accept', 
+    'Authorization'
+  ],
   credentials: true,
   optionsSuccessStatus: 200
 };

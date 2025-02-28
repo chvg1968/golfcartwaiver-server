@@ -12,16 +12,29 @@ router.use('/send-waiver-email', (req, res, next) => {
   next();
 });
 
-// Ruta principal para enviar correo
-router.post('/send-waiver-email', sendWaiverEmail);
-
 // Ruta OPTIONS para manejar preflight
 router.options('/send-waiver-email', (req, res) => {
   console.log('Solicitud OPTIONS recibida en /send-waiver-email');
-  res.header('Access-Control-Allow-Origin', '*');
+  
+  const allowedOrigins = [
+    'http://localhost:8888', 
+    'https://golf-cart-waiver.netlify.app',
+    'http://localhost:3000',
+    'https://golfcartwaiver-server.netlify.app'
+  ];
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  
   res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Max-Age', '86400'); // Caché de preflight por 24 horas
   res.sendStatus(200);
 });
+
+// Ruta principal para enviar correo
+router.post('/send-waiver-email', sendWaiverEmail);
 
 export default router;

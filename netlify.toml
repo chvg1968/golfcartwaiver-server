@@ -7,11 +7,6 @@
   NODE_VERSION = "18"
   NODE_ENV = "production"
 
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/server"
-  status = 200
-
 [[headers]]
   for = "/*"
   [headers.values]
@@ -19,6 +14,11 @@
     Access-Control-Allow-Methods = "GET, POST, OPTIONS, PUT, PATCH, DELETE"
     Access-Control-Allow-Headers = "X-Requested-With,content-type,Authorization"
     Access-Control-Allow-Credentials = "true"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/server"
+  status = 200
 
 [functions]
   node_bundler = "esbuild"

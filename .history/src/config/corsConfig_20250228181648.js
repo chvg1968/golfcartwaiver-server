@@ -3,6 +3,7 @@ const ALLOWED_ORIGINS = [
   'https://golf-cart-waiver.netlify.app', 
   'http://localhost:3000',
   'http://localhost:3001',
+  'https://golfcartwaiver-server.onrender.com'
 ];
 
 const corsOptions = {

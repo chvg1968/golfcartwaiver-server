@@ -40,7 +40,7 @@ app.use((req, res, next) => {
     'http://localhost:8888', 
     'https://golf-cart-waiver.netlify.app',
     'http://localhost:3000',
-    'https://golfcartwaiver-server.netlify.app'
+    'https://golfcartwaiver-server.onrender.com'
   ];
   const origin = req.headers.origin;
 
@@ -91,7 +91,7 @@ app.use('/proxy/send-waiver-email', (req, res, next) => {
 
 // Proxy para producción
 app.use('/proxy', createProxyMiddleware({
-  target: 'https://golfcartwaiver-server.netlify.app',
+  target: 'https://golfcartwaiver-server.onrender.com',
   changeOrigin: true,
   pathRewrite: {
     '^/proxy': '/api'
@@ -140,7 +140,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || (process.env.NODE_ENV === 'development' ? 10000 : 8080);
 
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log('===== INICIO DEL SERVIDOR =====');
@@ -153,7 +153,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log('- http://localhost:8888');
   console.log('- https://golf-cart-waiver.netlify.app');
   console.log('- http://localhost:3000');
-  console.log('- https://golfcartwaiver-server.netlify.app');
+  console.log('- https://golfcartwaiver-server.onrender.com');
   console.log('===== SERVIDOR INICIADO =====');
 });
 

@@ -20,7 +20,7 @@ router.options('/send-waiver-email', (req, res) => {
     'http://localhost:8888', 
     'https://golf-cart-waiver.netlify.app',
     'http://localhost:3000',
-    'https://golfcartwaiver-server.netlify.app'
+    'https://golfcartwaiver-server.onrender.com'
   ];
   const origin = req.headers.origin;
 

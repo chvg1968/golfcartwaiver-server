@@ -46,13 +46,11 @@ app.use((req, res, next) => {
 
   console.log('Origen de la solicitud:', origin);
 
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-
+  // Configurar headers CORS de manera más permisiva
+  res.header('Access-Control-Allow-Origin', origin || '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Credentials', 'true');
   
   // Responder a solicitudes OPTIONS
   if (req.method === 'OPTIONS') {

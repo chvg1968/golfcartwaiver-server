@@ -24,13 +24,13 @@ router.options('/send-waiver-email', (req, res) => {
   ];
   const origin = req.headers.origin;
 
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-  
+  // Configurar headers CORS de manera más permisiva
+  res.header('Access-Control-Allow-Origin', origin || '*');
   res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Max-Age', '86400'); // Caché de preflight por 24 horas
+  
   res.sendStatus(200);
 });
 

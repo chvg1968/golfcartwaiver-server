@@ -10,6 +10,12 @@ export async function sendWaiverEmail(req, res) {
   console.log('Cuerpo de la solicitud RAW:', req.body);
 
   try {
+    // Configuración de headers CORS
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Methods', 'POST');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+
     const { formData, pdfLink } = req.body;
 
     // Validaciones exhaustivas

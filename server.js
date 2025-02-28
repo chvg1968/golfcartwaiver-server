@@ -3,7 +3,6 @@ import express from 'express';
 import cors from 'cors';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import emailRoutes from './src/routes/emailRoutes.js';
-import corsOptions from './src/config/corsConfig.js';
 
 const app = express();
 
@@ -34,7 +33,42 @@ app.use((req, res, next) => {
 // Middleware de seguridad
 app.disable('x-powered-by');
 
+// Configuración de CORS más permisiva
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:8888', 
+      'https://golf-cart-waiver.netlify.app',
+      'http://localhost:3000',
+      'https://golfcartwaiver-server.onrender.com'
+    ];
+
+    console.log('Origen de la solicitud:', origin);
+
+    // Permitir cualquier origen de la lista o sin origen
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.warn('Origen no permitido:', origin);
+      callback(null, true); // Cambio clave: permitir cualquier origen
+    }
+  },
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+  allowedHeaders: [
+    'Origin', 
+    'X-Requested-With', 
+    'Content-Type', 
+    'Accept', 
+    'Authorization'
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
 // Middleware CORS global
+app.use(cors(corsOptions));
+
+// Middleware adicional para headers CORS
 app.use((req, res, next) => {
   const allowedOrigins = [
     'http://localhost:8888', 
@@ -43,8 +77,6 @@ app.use((req, res, next) => {
     'https://golfcartwaiver-server.onrender.com'
   ];
   const origin = req.headers.origin;
-
-  console.log('Origen de la solicitud:', origin);
 
   // Configurar headers CORS de manera más permisiva
   res.header('Access-Control-Allow-Origin', origin || '*');

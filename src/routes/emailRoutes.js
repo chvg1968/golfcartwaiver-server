@@ -24,8 +24,12 @@ router.options('/send-waiver-email', (req, res) => {
   ];
   const origin = req.headers.origin;
 
-  // Configurar headers CORS de manera más permisiva
-  res.header('Access-Control-Allow-Origin', origin || '*');
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  } else {
+    res.header('Access-Control-Allow-Origin', '*');
+  }
+  
   res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.header('Access-Control-Allow-Credentials', 'true');

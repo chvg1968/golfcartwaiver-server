@@ -5,19 +5,54 @@ import emailRoutes from './src/routes/emailRoutes.js';
 
 const app = express();
 
+// Middleware for logging and debugging
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log('Headers:', JSON.stringify(req.headers, null, 2));
+  next();
+});
+
 // CORS configuration
 const corsOptions = {
-  origin: 'https://golf-cart-waiver.netlify.app',
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'https://golf-cart-waiver.netlify.app',
+      'http://localhost:3000',
+      'http://localhost:8888'
+    ];
+
+    console.log('Incoming origin:', origin);
+
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.warn('Blocked by CORS:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  credentials: true,
+  optionsSuccessStatus: 200
 };
 
 // Apply CORS middleware
 app.use(cors(corsOptions));
 
-// Handle preflight requests
+// Handle preflight requests explicitly
 app.options('*', cors(corsOptions));
+
+// Additional CORS headers middleware
+app.use((req, res, next) => {
+  const origin = req.get('origin');
+  if (origin) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  next();
+});
 
 // Middlewares globales
 app.disable('x-powered-by');

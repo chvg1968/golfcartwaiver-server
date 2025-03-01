@@ -5,25 +5,25 @@ import emailRoutes from './src/routes/emailRoutes.js';
 
 const app = express();
 
-// Middleware for logging and debugging
+// Middleware para logging
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  console.log('Headers:', JSON.stringify(req.headers, null, 2));
   next();
 });
 
-// CORS configuration
+// Configuración CORS simplificada y robusta
+const allowedOrigins = [
+  'https://golf-cart-waiver.netlify.app',
+  'http://localhost:3000',
+  'http://localhost:8888'
+];
+
 const corsOptions = {
   origin: function (origin, callback) {
-    const allowedOrigins = [
-      'https://golf-cart-waiver.netlify.app',
-      'http://localhost:3000',
-      'http://localhost:8888'
-    ];
-
     console.log('Incoming origin:', origin);
-
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    
+    // Para solicitudes sin origen (como herramientas de API) o orígenes permitidos
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       console.warn('Blocked by CORS:', origin);
@@ -31,39 +31,18 @@ const corsOptions = {
     }
   },
   methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 204  // Cambiado a 204 para respuestas preflight más estándar
 };
 
-// Apply CORS middleware
+// Aplicar CORS como middleware global
 app.use(cors(corsOptions));
-
-// Handle preflight requests explicitly
-app.options('*', cors(corsOptions));
-
-// Additional CORS headers middleware
-app.use((req, res, next) => {
-  const origin = req.get('origin');
-  if (origin) {
-    res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
-  }
-  next();
-});
 
 // Middlewares globales
 app.disable('x-powered-by');
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: false, limit: '10kb' }));
-
-// Middleware for logging requests (optional, but helpful for debugging)
-app.use((req, res, next) => {
-  console.log(`Incoming request: ${req.method} ${req.url} from origin: ${req.get('origin')}`);
-  next();
-});
 
 // Rutas API
 app.use('/api', emailRoutes);
@@ -79,10 +58,10 @@ app.use((req, res) => {
 // Manejo global de errores
 app.use((err, req, res, next) => {
   console.error('Error en el servidor:', err.stack);
-  res.status(500).json({ 
-    error: 'Error interno del servidor', 
+  res.status(500).json({
+    error: 'Error interno del servidor',
     message: err.message,
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined 
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
   });
 });
 

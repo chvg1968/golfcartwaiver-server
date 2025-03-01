@@ -1,30 +1,19 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import corsOptions from './src/config/corsConfig.js';
 import emailRoutes from './src/routes/emailRoutes.js';
 
 const app = express();
 
-// Middleware for logging requests (optional, but helpful for debugging)
-app.use((req, res, next) => {
-  console.log(`Incoming request: ${req.method} ${req.url} from origin: ${req.get('origin')}`);
-  next();
-});
+// CORS configuration
+const corsOptions = {
+  origin: 'https://golf-cart-waiver.netlify.app',
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
 
-// CORS configuration with more explicit handling
-app.use((req, res, next) => {
-  const origin = req.header('Origin');
-  if (origin && corsOptions.origin(origin, (err, allow) => allow)) {
-    res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Methods', corsOptions.methods.join(', '));
-    res.header('Access-Control-Allow-Headers', corsOptions.allowedHeaders.join(', '));
-    res.header('Access-Control-Allow-Credentials', 'true');
-  }
-  next();
-});
-
-// Use CORS middleware
+// Apply CORS middleware
 app.use(cors(corsOptions));
 
 // Handle preflight requests
@@ -34,6 +23,12 @@ app.options('*', cors(corsOptions));
 app.disable('x-powered-by');
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: false, limit: '10kb' }));
+
+// Middleware for logging requests (optional, but helpful for debugging)
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.url} from origin: ${req.get('origin')}`);
+  next();
+});
 
 // Rutas API
 app.use('/api', emailRoutes);
